@@ -28,7 +28,7 @@ MATLAB workspace.
 
 | Script | Purpose |
 | ----- | ----- |
-| `reactor_init` | initializes the computation. All parameters are set here |
+| `reactor_init` | initializes the computation. All parameters are set here. All variables except persistent variables are cleared. |
 | `reactor_solve` | solves the primary problem for the current settings of $\beta_{\text{eff},i}$ (usually called from within other scripts) |
 | `reactor_optimize` | peforms a given number of GD epochs, updates the plots of the results after each epoch |
 | `reactor_randomize` | performs optimization by random shooting in the neighborhood of the current $\vec{\beta}$  |
@@ -37,3 +37,6 @@ MATLAB workspace.
 | `reactor_plot_paths` | plots the evolution of all $\beta_{\text{eff},i}$ in a composite figure |
 
 `reactor_optimize` or `reactor_randomize` may be called multiple times after `reactor_init`
+
+The script `reactor_study` uses persistent variables (named `PERSIST_....`) to perform a parametric study (the current version
+iterates over different settings of solver accuracy, gradient computation method, and subset of experiments.
