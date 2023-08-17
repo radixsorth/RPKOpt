@@ -248,7 +248,7 @@ end
 
 function [gradient, e] = calc_gradient_nesterov(ep)
 
-    global beta time solution learning_rate rel_learning_rate;
+    global beta time solution learning_rate rel_learning_rate grad_norm grad_norm_mode;
     persistent gradient1;
 
     % as always, the solution with the current beta is expected to be
@@ -289,7 +289,9 @@ function [gradient, e] = calc_gradient_nesterov(ep)
 
     % Nesterov GD with averaging (always normalizing the gradient)
     gradient = momentum * gradient1 + gradient2;
-    gradient = gradient / norm(gradient);
+    if(grad_norm_mode || grad_norm==0)
+        gradient = gradient / norm(gradient);
+    end
     
     % next time, we will re-use the current direction
     gradient1 = gradient;
