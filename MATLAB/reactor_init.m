@@ -120,7 +120,10 @@ experiments = [1 2 3];
 
 % all available experiments listed here
 exp_names = { 'Rod drop', 'Sine', 'Triangular' };
+% power output data with moving averaging applied to reduce noise
 N_datafiles = { 'datafiles/pad_LCM_vyk_mov_avr.dat', 'datafiles/sin_LCM_vyk_mov_avr.dat', 'datafiles/troj100_LCM_vyk_mov_avr.dat' };
+% raw power output data
+%N_datafiles = { 'datafiles/raw/pad_LCM_vyk.dat', 'datafiles/raw/sin_LCM_vyk.dat', 'datafiles/raw/troj100_LCM_vyk.dat' };
 rho_datafiles = { 'datafiles/pad_LCM_rho.dat', 'datafiles/sin_LCM_rho.dat', 'datafiles/troj100_LCM_rho.dat' };
 
 
