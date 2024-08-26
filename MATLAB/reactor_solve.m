@@ -1,6 +1,6 @@
 % solution of the system with the current settings of beta
 
-global beta Lambda time solution c0 N0;
+global beta Lambda lambda N0 time solution;
 global beta_size;
 global beta_sum beta_div_Lambda;
 global exp_count N_data final_time;
@@ -13,9 +13,10 @@ beta_div_Lambda = beta' / Lambda;
 
 % perform the computation 
 for j=1:exp_count
-
+    % calculate the initial condition that depends on the current beta
+    c0{j} = beta*N0{j}./(Lambda*lambda);
+    % solve the ODE system
     [time{j},solution{j}] = ode15s(@(t,y) RHS_primary(j,t,y),[0 final_time{j}],[c0{j} N0{j}], options_primary{adaptivity+1});
-
 end
 
 % update the losses

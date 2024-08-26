@@ -24,7 +24,7 @@ global plot_initial_guess;
 global optimizer;
 global optimization_instance epoch_within_instance beta_history;
 global exp_count exp_names N_data rho_data final_time;
-global beta Lambda lambda c0 N0;
+global beta Lambda lambda N0;
 global beta_size beta_sum_Serpent;
 global seed_count seed_file shots rel_magnitude rand_magnitude;
 global max_retries delta omega epsilon epsilon_a_ratio adaptivity grad_norm_mode options_primary adjoint options_adjoint learning_rate rel_learning_rate epoch epochs_to_go;
@@ -158,7 +158,6 @@ for j = 1:exp_count
     rho_data{j} =  griddedInterpolant(rho_exp_data(:,1), rho_exp_data(:,2)*beta_sum_Serpent);
     % initial conditions
     N0{j} = N_data{j}(0);
-    c0{j} = beta*N0{j}./(Lambda*lambda);
 end
 
 % initialization of the optimizer

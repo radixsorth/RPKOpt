@@ -110,7 +110,7 @@ function gradient = calc_gradient_adjoint()
     global beta_size;
     global exp_count final_time options_adjoint adaptivity;
     global time solution;
-    global N_sim_interpolant Lambda;
+    global N_sim_interpolant Lambda lambda N0;
 
     % backward-in-time solution evaluation requires interpolation
 
@@ -127,6 +127,8 @@ function gradient = calc_gradient_adjoint()
     grad = zeros(1,beta_size);
     for j=1:exp_count
         grad = grad + ( trapz(time_adj{j},(pq{j}(:,1)-pq{j}(:,2:beta_size+1)).*N_sim_interpolant{j}(final_time{j}-time_adj{j}),1) ) / Lambda;
+        % contribution of the initial condition
+        grad = grad + N0{j}./(Lambda*lambda).*pq{j}(end,2:beta_size+1);
     end
     
     gradient = grad;
