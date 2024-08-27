@@ -121,7 +121,7 @@ experiments = [1 2 3];
 % all available experiments listed here
 exp_names = { 'Rod drop', 'Sine', 'Triangular' };
 % default weights: all experiments have the same weight in the loss functional
-exp_weights = {1, 1, 1};
+exp_weights = {1, 4, 1};
 % power output data with moving averaging applied to reduce noise
 N_datafiles = { 'datafiles/pad_LCM_vyk_mov_avr.dat', 'datafiles/sin_LCM_vyk_mov_avr.dat', 'datafiles/troj100_LCM_vyk_mov_avr.dat' };
 % raw power output data
