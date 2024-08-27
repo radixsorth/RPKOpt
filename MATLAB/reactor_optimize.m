@@ -97,9 +97,9 @@ function r = RHS_adjoint(j,T,t,pq)
     % NOTE: pq = [p q1 q2 q3 ... qX]
     global lambda beta_div_Lambda beta_sum Lambda rho_data;
     global beta_size;
-    global N_sim_interpolant N_data;
+    global exp_weights N_sim_interpolant N_data;
     r = zeros(beta_size+1,1);
-    r(1) = ((rho_data{j}(T-t)-beta_sum)/Lambda)*pq(1) + beta_div_Lambda'*pq(2:beta_size+1) - N_sim_interpolant{j}(T-t) + N_data{j}(T-t);
+    r(1) = ((rho_data{j}(T-t)-beta_sum)/Lambda)*pq(1) + beta_div_Lambda'*pq(2:beta_size+1) + exp_weights{j} * (N_data{j}(T-t) - N_sim_interpolant{j}(T-t));
     r(2:beta_size+1) = lambda'.*(pq(1)-pq(2:beta_size+1));
 end
         
@@ -128,7 +128,7 @@ function gradient = calc_gradient_adjoint()
     for j=1:exp_count
         grad = grad + ( trapz(time_adj{j},(pq{j}(:,1)-pq{j}(:,2:beta_size+1)).*N_sim_interpolant{j}(final_time{j}-time_adj{j}),1) ) / Lambda;
         % contribution of the initial condition
-        grad = grad + N0{j}./(Lambda*lambda).*pq{j}(end,2:beta_size+1);
+        grad = grad - N0{j}./(Lambda*lambda).*pq{j}(end,2:beta_size+1);
     end
     
     gradient = grad;

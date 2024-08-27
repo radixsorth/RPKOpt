@@ -23,7 +23,7 @@ clearvars -global -except PERSIST*
 global plot_initial_guess;
 global optimizer;
 global optimization_instance epoch_within_instance beta_history;
-global exp_count exp_names N_data rho_data final_time;
+global exp_count exp_names exp_weights N_data rho_data final_time;
 global beta Lambda lambda N0;
 global beta_size beta_sum_Serpent;
 global seed_count seed_file shots rel_magnitude rand_magnitude;
@@ -120,12 +120,13 @@ experiments = [1 2 3];
 
 % all available experiments listed here
 exp_names = { 'Rod drop', 'Sine', 'Triangular' };
+% default weights: all experiments have the same weight in the loss functional
+exp_weights = {1, 1, 1};
 % power output data with moving averaging applied to reduce noise
 N_datafiles = { 'datafiles/pad_LCM_vyk_mov_avr.dat', 'datafiles/sin_LCM_vyk_mov_avr.dat', 'datafiles/troj100_LCM_vyk_mov_avr.dat' };
 % raw power output data
 %N_datafiles = { 'datafiles/raw/pad_LCM_vyk.dat', 'datafiles/raw/sin_LCM_vyk.dat', 'datafiles/raw/troj100_LCM_vyk.dat' };
 rho_datafiles = { 'datafiles/pad_LCM_rho.dat', 'datafiles/sin_LCM_rho.dat', 'datafiles/troj100_LCM_rho.dat' };
-
 
 % ------------------------------------------------------------------------
 % *** NO USER-ADJUSTABLE PARAMETERS BELOW THIS LINE ***
@@ -158,6 +159,9 @@ for j = 1:exp_count
     rho_data{j} =  griddedInterpolant(rho_exp_data(:,1), rho_exp_data(:,2)*beta_sum_Serpent);
     % initial conditions
     N0{j} = N_data{j}(0);
+    % adjust experiment weights by the inverse proportionality to final time
+    % (relate loss to one second of time for each experiment)
+    exp_weights{j} = exp_weights{j} / final_time{j};
 end
 
 % initialization of the optimizer

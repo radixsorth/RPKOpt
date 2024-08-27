@@ -3,7 +3,7 @@
 global beta Lambda lambda N0 time solution;
 global beta_size;
 global beta_sum beta_div_Lambda;
-global exp_count N_data final_time;
+global exp_count exp_weights N_data final_time;
 global loss init_loss loss_total init_loss_total adaptivity options_primary;
 global init_time init_solution;
 global solved_once;
@@ -21,7 +21,7 @@ end
 
 % update the losses
 for j=1:exp_count
-        loss(j) = 0.5*trapz(time{j}, (solution{j}(:,beta_size+1)-N_data{j}(time{j})).^2);
+        loss(j) = exp_weights{j} * 0.5 * trapz(time{j}, (solution{j}(:,beta_size+1)-N_data{j}(time{j})).^2);
 end
 loss_total = sum(loss);
 

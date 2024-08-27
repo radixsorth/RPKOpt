@@ -8,7 +8,7 @@ if(~isempty(PERSIST_batchmode))
 end
 
 global PERSIST_fig_handle;
-global max_data_points_to_plot beta beta_history;
+global beta beta_history;
 
 % avoid overwriting the content of the main figure
 if(gcf==PERSIST_fig_handle)
