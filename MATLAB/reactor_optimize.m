@@ -73,9 +73,9 @@ function gradient = calc_gradient_simple()
     % assumes that the the currently available solution already corresponds to the
     % curent value of beta
     global beta_size;
-    global loss beta epsilon epsilon_a_ratio learning_rate rel_learning_rate;
+    global loss loss_total beta epsilon epsilon_a_ratio learning_rate rel_learning_rate;
     beta_orig = beta;
-    l_orig = sum(loss);
+    l_orig = loss_total;
 
     grad = zeros(1,beta_size);
     for i = 1:beta_size
@@ -83,7 +83,7 @@ function gradient = calc_gradient_simple()
         %epsilon_a = epsilon(i);
         beta(i) = beta_orig(i) + epsilon_a;
         reactor_solve;
-        l=sum(loss);
+        l=loss_total;
         grad(i) = (l - l_orig)/epsilon_a;
 
         beta(i) = beta_orig(i);
@@ -107,7 +107,7 @@ function gradient = calc_gradient_adjoint()
     % calculates the gradient by the adjoint method
     % assumes that the the currently available solution already corresponds to the
     % curent value of beta
-    global beta_size;
+    global beta beta_init beta_uncertainties drift_penalization beta_size;
     global exp_count final_time options_adjoint adaptivity;
     global time solution;
     global N_sim_interpolant Lambda lambda N0;
@@ -130,6 +130,9 @@ function gradient = calc_gradient_adjoint()
         % contribution of the initial condition
         grad = grad - N0{j}./(Lambda*lambda).*pq{j}(end,2:beta_size+1);
     end
+
+    % add the drift penalization part
+    grad = grad + drift_penalization * ((beta-beta_init)./(beta_uncertainties.^2));
     
     gradient = grad;
 end

@@ -1,7 +1,7 @@
 % solution of the system with the current settings of beta
 
-global beta Lambda lambda N0 time solution;
-global beta_size;
+global beta beta_uncertainties drift_penalization Lambda lambda N0 time solution;
+global beta_init beta_size;
 global beta_sum beta_div_Lambda;
 global exp_count exp_weights N_data final_time;
 global loss init_loss loss_total init_loss_total adaptivity options_primary;
@@ -24,8 +24,11 @@ for j=1:exp_count
         loss(j) = exp_weights{j} * 0.5 * trapz(time{j}, (solution{j}(:,beta_size+1)-N_data{j}(time{j})).^2);
 end
 loss_total = sum(loss);
+% add the drift penalization part to the total loss
+loss_total = loss_total + 0.5 * drift_penalization * sumsqr((beta-beta_init)./beta_uncertainties);
 
-% initial solution - store the 
+% initial solution - store the initial loss to be able to report loss
+% values relative to its initial value
 if(isempty(solved_once))
     init_loss = loss;
     init_loss_total = loss_total;

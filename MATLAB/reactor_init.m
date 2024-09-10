@@ -24,8 +24,8 @@ global plot_initial_guess;
 global optimizer;
 global optimization_instance epoch_within_instance beta_history;
 global exp_count exp_names exp_weights N_data rho_data final_time;
-global beta Lambda lambda N0;
-global beta_size beta_sum_Serpent;
+global beta beta_uncertainties drift_penalization Lambda lambda N0;
+global beta_init beta_size beta_sum_Serpent;
 global seed_count seed_file shots rel_magnitude rand_magnitude;
 global max_retries delta omega epsilon epsilon_a_ratio adaptivity grad_norm_mode options_primary adjoint options_adjoint learning_rate rel_learning_rate epoch epochs_to_go;
 global loss_acc loss_acc_total;
@@ -46,6 +46,8 @@ switch betas
         beta = [0.00027,0.00139,0.00134,0.00295,0.00122,0.00056];
         % intentionally wrong initial data
         %beta = [0.00237,0.00150,0.00089,0.00395,0.00162,0.00056];
+        beta_uncertainties = 1e-2*beta; % currently, we don't have uncertainty data for the 6-class model
+        drift_penalization = 0.01;
         rand_magnitude = [0.00001, 0.0001, 0.0001, 0.0002, 0.0001, 0.00005];
 
     case 8
@@ -53,7 +55,12 @@ switch betas
         Lambda = 4.202714e-5;
         % initial guess for betas
         lambda = [0.01247,0.02829,0.04252,0.13304,0.29247,0.66649,1.63478,3.55460];
-        beta = [0.00031,0.0012,0.00076,0.00152,0.00263,0.00072,0.00066,0.00019];
+        % orig. data for 8 classes
+        %beta = [0.00031,0.0012,0.00076,0.00152,0.00263,0.00072,0.00066,0.00019];
+        % alternate data for 8 classes
+        beta = 1e-4 * [2.64252 11.7054 7.44632 15.5447 25.7716 7.32912 6.52777 1.86947];
+        beta_uncertainties = 1e-6 * [2.254 4.752 3.790 5.394 7.010 3.782 3.479 1.926];
+        drift_penalization = 0.01;
         rand_magnitude = [0.00001, 0.0001, 0.0001, 0.0002, 0.0001, 0.00005, 0.00002, 0.00001];
 
     otherwise
@@ -169,6 +176,7 @@ epoch = 0;
 optimization_instance = 1;
 epoch_within_instance = 0;
 beta_history{optimization_instance} = beta;
+beta_init = beta;
 
 % valaue of the loss function (accumulated in order to be plotted)
 % the initial value is set at 100%

@@ -15,19 +15,15 @@ global beta beta_size beta_init;
 global seed_count seed_file rel_magnitude rand_magnitude;
 
 reseed = 1;
-if(epoch==0)
-    beta_init = beta;
-
-    if(isfile(seed_file))
-        betas = readmatrix(seed_file);
-        seed_count = size(betas,1);
-        beta_sz = size(betas,2);
-        if(beta_sz == beta_size)
-            disp('Initial seeds for beta have beeen loaded from file.');
-            reseed = 0;
-        else
-            disp('Warning: beta seed data does not match the dimension of the problem! Will re-seed.');
-        end
+if(epoch==0 && isfile(seed_file))
+    betas = readmatrix(seed_file);
+    seed_count = size(betas,1);
+    beta_sz = size(betas,2);
+    if(beta_sz == beta_size)
+        disp('Initial seeds for beta have beeen loaded from file.');
+        reseed = 0;
+    else
+        disp('Warning: beta seed data does not match the dimension of the problem! Will re-seed.');
     end
 end
 
