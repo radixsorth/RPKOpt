@@ -69,7 +69,7 @@ every_nth = ceil((epoch+1) / max_data_points_to_plot);
 
 hold(ax_loss, 'off');
 plot(ax_loss, 0:every_nth:epoch, loss_acc_total(1:every_nth:end), '-o', 'LineWidth', 2);
-loss_legend_entries{1} = 'Total loss:';
+loss_legend_entries{1} = 'Total loss';
 hold(ax_loss, 'on');
 for j=1:exp_count
        plot(ax_loss, 0:every_nth:epoch, loss_acc{j}(1:every_nth:end), '--o', 'LineWidth', 2);
