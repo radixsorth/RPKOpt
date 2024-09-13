@@ -43,11 +43,11 @@ switch betas
         Lambda = 4.988e-5;
         lambda = [0.01334,0.03272,0.12081,0.30312,0.85096,2.85791];
         % initial guess for betas
-        beta = [0.00027,0.00139,0.00134,0.00295,0.00122,0.00056];
+        beta = 1e-4 * [2.72 13.9 13.4 29.8 12.4 5.18];
         % intentionally wrong initial data
         %beta = [0.00237,0.00150,0.00089,0.00395,0.00162,0.00056];
-        beta_uncertainties = 1e-2*beta; % currently, we don't have uncertainty data for the 6-class model
-        drift_penalization = 0.01;
+        beta_uncertainties = 1e-6 * [1.75 3.96 9.98 5.83 3.84 2.45];
+        drift_penalization = 1e4;
         rand_magnitude = [0.00001, 0.0001, 0.0001, 0.0002, 0.0001, 0.00005];
 
     case 8
@@ -135,6 +135,10 @@ N_datafiles = { 'datafiles/pad_LCM_vyk_mov_avr.dat', 'datafiles/sin_LCM_vyk_mov_
 %N_datafiles = { 'datafiles/raw/pad_LCM_vyk.dat', 'datafiles/raw/sin_LCM_vyk.dat', 'datafiles/raw/troj100_LCM_vyk.dat' };
 rho_datafiles = { 'datafiles/pad_LCM_rho.dat', 'datafiles/sin_LCM_rho.dat', 'datafiles/troj100_LCM_rho.dat' };
 
+% scaling factor between raw measurements (milliamperes) and the correct
+% power output units (impulses per second)
+mA_to_impps = 1e5/105.0;
+
 % ------------------------------------------------------------------------
 % *** NO USER-ADJUSTABLE PARAMETERS BELOW THIS LINE ***
 % ------------------------------------------------------------------------
@@ -159,7 +163,7 @@ exp_count = size(exp_names,2);
 for j = 1:exp_count
     N_exp_data = readmatrix(N_datafiles{j});
     final_time{j} = N_exp_data(end,1);
-    N_data{j} =  griddedInterpolant(N_exp_data(:,1), N_exp_data(:,2));
+    N_data{j} =  griddedInterpolant(N_exp_data(:,1), N_exp_data(:,2)*mA_to_impps);
     rho_exp_data = readmatrix(rho_datafiles{j});
     % the reactivity data are provided in the data files in beta_eff units
     % (multiplied by beta_eff which is equal 
