@@ -7,12 +7,13 @@ PERSIST_batchmode=1;
 
 % variables set in reactor_init.m and overriden in this study need to be
 % declared global
-global optimizer adjoint options_primary options_adjoint learning_rate PERSIST_experiments
+global optimizer drift_penalization adjoint options_primary options_adjoint learning_rate PERSIST_experiments
 
 PERSIST_basedir = 'Direct-vs-adjoint/';
 
 % solver
 PERSIST_optimizer = 'VanillaGD';
+PERSIST_drift_penalization = 0;
 
 % accuracy
 PERSIST_RelTol = [ 1e-5, 1e-7, 1e-9 ];  % both for primary & adjoint
@@ -41,6 +42,7 @@ for PERSIST_acc =1:3
 
             % override all remaining case parameters
             optimizer = PERSIST_optimizer;
+            drift_penalization = PERSIST_drift_penalization;
             adjoint = PERSIST_adjoint(PERSIST_method);
             options_primary = { odeset('RelTol', PERSIST_RelTol(PERSIST_acc) ,'AbsTol', PERSIST_AbsTol(PERSIST_acc)) ...
             odeset('RelTol', PERSIST_RelTol(PERSIST_acc)/10 ,'AbsTol', PERSIST_AbsTol(PERSIST_acc)/10) };
