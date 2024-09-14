@@ -34,45 +34,100 @@ global max_data_points_to_plot;
 % -------------------------------------------------------------------------
 % Model parameters
 
-betas = 6;
+opt_case = 'C12-C_6';
+raw_data = 0;           % 0 = moving-averaged power output data, 1 = raw data
 
-switch betas
+switch opt_case
     
-    case 6
+    case 'C15_6'
         % --- 6-class version ---
-        Lambda = 4.988e-5;
+        core_configuration = 'C15';
+        Lambda = 4.19e-5;
         lambda = [0.01334,0.03272,0.12081,0.30312,0.85096,2.85791];
         % initial guess for betas
         beta = 1e-4 * [2.72 13.9 13.4 29.8 12.4 5.18];
         % intentionally wrong initial data
         %beta = [0.00237,0.00150,0.00089,0.00395,0.00162,0.00056];
         beta_uncertainties = 1e-6 * [1.75 3.96 9.98 5.83 3.84 2.45];
-        drift_penalization = 1e4;
         rand_magnitude = [0.00001, 0.0001, 0.0001, 0.0002, 0.0001, 0.00005];
 
-    case 8
+    case 'C15_8'
+        % TODO
         % --- 8-class version ----
-        Lambda = 4.202714e-5;
+        core_configuration = 'C15';
+        Lambda = 4.18e-5;
         % initial guess for betas
         lambda = [0.01247,0.02829,0.04252,0.13304,0.29247,0.66649,1.63478,3.55460];
         % orig. data for 8 classes
         %beta = [0.00031,0.0012,0.00076,0.00152,0.00263,0.00072,0.00066,0.00019];
         % alternate data for 8 classes
-        beta = 1e-4 * [2.64252 11.7054 7.44632 15.5447 25.7716 7.32912 6.52777 1.86947];
-        beta_uncertainties = 1e-6 * [2.254 4.752 3.790 5.394 7.010 3.782 3.479 1.926];
-        drift_penalization = 0.01;
+        beta = 1e-4 * [2.71 11.8 7.5 15.7 25.9 7.4 6.54 1.91];
+        beta_uncertainties = 1e-6 * [1.74 3.68 2.89 4.32 5.61 2.90 2.70 1.47];
+        rand_magnitude = [0.00001, 0.0001, 0.0001, 0.0002, 0.0001, 0.00005, 0.00002, 0.00001];
+
+    case 'C12-C_6'
+        % --- 6-class version ---
+        core_configuration = 'C12-C';
+        Lambda = 4.93e-5;
+        lambda = [0.01334,0.03272,0.12081,0.30312,0.85096,2.85791];
+        % initial guess for betas
+        beta = 1e-4 * [2.69 13.8 13.3 29.4 12.2 5.14];
+        % intentionally wrong initial data
+        %beta = [0.00237,0.00150,0.00089,0.00395,0.00162,0.00056];
+        beta_uncertainties = 1e-6 * [2.80 6.21 6.43 9.11 6.15 3.87];
+        rand_magnitude = [0.00001, 0.0001, 0.0001, 0.0002, 0.0001, 0.00005];
+
+    case 'C12-C_8'
+        % TODO
+        % --- 8-class version ----
+        core_configuration = 'C12-C';
+        Lambda = 4.93e-5;
+        % initial guess for betas
+        lambda = [0.01247,0.02829,0.04252,0.13304,0.29247,0.66649,1.63478,3.55460];
+        % orig. data for 8 classes
+        %beta = [0.00031,0.0012,0.00076,0.00152,0.00263,0.00072,0.00066,0.00019];
+        % alternate data for 8 classes
+        beta = 1e-4 * [2.66 11.7 7.45 15.5 25.5 7.19 6.45 1.87];
+        beta_uncertainties = 1e-6 * [2.76 5.82 4.44 6.49 8.7 4.65 4.32 2.29];
         rand_magnitude = [0.00001, 0.0001, 0.0001, 0.0002, 0.0001, 0.00005, 0.00002, 0.00001];
 
     otherwise
-        disp('ERROR: Data for the given number of betas not available!')
+        disp('ERROR: Data for the given case not available!')
         return
 end
+
+% -------------------------------------------------------------------------
+% Experiments description & data files
+
+% weight on the regularization term (gamma)
+drift_penalization = 1e4;
 
 % the reactivity data are provided in the data files in beta_eff units
 % (divided by "sum(beta)") which is determined by the Serpent code
 % As sum(beta) is subject to optimization, we must use rho in absolute
 % (dimensionless) form and thus pre-multiply it by the value below:
 beta_sum_Serpent = 0.0077;
+
+
+% experiments to consider
+experiments = [1 2 3];
+
+% all available experiments listed here
+exp_names = { 'Rod drop', 'Sine', 'Triangular' };
+datafiles = {'drop.dat', 'sin.dat', 'triang.dat'};
+% weights of the individual experiments in the loss functional
+% (below, they are further adjusted to account for loss per unit time of each experiment)
+exp_weights = {1, 4, 1};
+
+raw_prefix = {'', 'raw_'};
+% path to power output datafiles
+N_path = ['datafiles/' core_configuration '/' raw_prefix{raw_data+1} 'power'];
+% path to reactivity datafiles
+rho_path = ['datafiles/' core_configuration '/reactivity'];
+
+% scaling factor between raw measurements (milliamperes) and the correct
+% power output units (impulses per second)
+mA_to_impps = 1e5/105.0;
 
 % -------------------------------------------------------------------------
 % Common initial guess (seed) / randomization parameters
@@ -113,31 +168,11 @@ max_data_points_to_plot = 101;
 
 % ODE solver options (different for fixed & adaptive learning rate)
 % options = odeset('RelTol',1e-5,'AbsTol',1e-2,'Stats','on');
-options_primary = { odeset('RelTol',1e-5,'AbsTol',1e-2) ...
-            odeset('RelTol',1e-12,'AbsTol',1e-3) };
-options_adjoint = { odeset('RelTol',1e-5,'AbsTol',1e-2, 'MaxStep', 0.1) ...
-            odeset('RelTol',1e-12,'AbsTol',1e-3, 'MaxStep', 0.1) };
+options_primary = { odeset('RelTol',1e-6,'AbsTol',1e+1) ...
+            odeset('RelTol',1e-6,'AbsTol',1e-12) };
+options_adjoint = { odeset('RelTol',1e-6,'AbsTol',1e+0, 'MaxStep', 0.1) ...
+            odeset('RelTol',1e-6,'AbsTol',1e-12, 'MaxStep', 0.1) };
 
-        
-% -------------------------------------------------------------------------
-% Experiments description & data files
-
-% experiments to consider
-experiments = [1 2 3];
-
-% all available experiments listed here
-exp_names = { 'Rod drop', 'Sine', 'Triangular' };
-% default weights: all experiments have the same weight in the loss functional
-exp_weights = {1, 4, 1};
-% power output data with moving averaging applied to reduce noise
-N_datafiles = { 'datafiles/pad_LCM_vyk_mov_avr.dat', 'datafiles/sin_LCM_vyk_mov_avr.dat', 'datafiles/troj100_LCM_vyk_mov_avr.dat' };
-% raw power output data
-%N_datafiles = { 'datafiles/raw/pad_LCM_vyk.dat', 'datafiles/raw/sin_LCM_vyk.dat', 'datafiles/raw/troj100_LCM_vyk.dat' };
-rho_datafiles = { 'datafiles/pad_LCM_rho.dat', 'datafiles/sin_LCM_rho.dat', 'datafiles/troj100_LCM_rho.dat' };
-
-% scaling factor between raw measurements (milliamperes) and the correct
-% power output units (impulses per second)
-mA_to_impps = 1e5/105.0;
 
 % ------------------------------------------------------------------------
 % *** NO USER-ADJUSTABLE PARAMETERS BELOW THIS LINE ***
@@ -155,18 +190,18 @@ end
 % only consider the subset of experiments given by the indices in the array
 % 'experiments'
 exp_names = exp_names(experiments);
-N_datafiles = N_datafiles(experiments);
-rho_datafiles = rho_datafiles(experiments);
+datafiles = datafiles(experiments);
+exp_weights = exp_weights(experiments);
 
 exp_count = size(exp_names,2);
 
 for j = 1:exp_count
-    N_exp_data = readmatrix(N_datafiles{j});
+    N_exp_data = readmatrix([N_path '/' datafiles{j}]);
     final_time{j} = N_exp_data(end,1);
     N_data{j} =  griddedInterpolant(N_exp_data(:,1), N_exp_data(:,2)*mA_to_impps);
-    rho_exp_data = readmatrix(rho_datafiles{j});
+    rho_exp_data = readmatrix([rho_path '/' datafiles{j}]);
     % the reactivity data are provided in the data files in beta_eff units
-    % (multiplied by beta_eff which is equal 
+    % (multiplied by beta_eff). We convert it to dimensionless units.
     rho_data{j} =  griddedInterpolant(rho_exp_data(:,1), rho_exp_data(:,2)*beta_sum_Serpent);
     % initial conditions
     N0{j} = N_data{j}(0);
