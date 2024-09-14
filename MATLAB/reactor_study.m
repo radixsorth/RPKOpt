@@ -15,8 +15,8 @@ PERSIST_basedir = 'Direct-vs-adjoint/';
 PERSIST_optimizer = 'VanillaGD';
 
 % accuracy
-PERSIST_RelTol = [ 1e-5, 1e-12, 1e-12 ];
-PERSIST_AbsTol = [ 1e-2, 1e-5, 1e-7 ];
+PERSIST_RelTol = [ 1e-5, 1e-7, 1e-9 ];  % both for primary & adjoint
+PERSIST_AbsTol = [ 1e+1, 1e-1, 1e-3 ];  % for primary only; value for adjoint is 10^4 times smaller
 PERSIST_acc_name = { 'low', 'medium', 'high' };
 
 % gradient computation method
@@ -43,9 +43,9 @@ for PERSIST_acc =1:3
             optimizer = PERSIST_optimizer;
             adjoint = PERSIST_adjoint(PERSIST_method);
             options_primary = { odeset('RelTol', PERSIST_RelTol(PERSIST_acc) ,'AbsTol', PERSIST_AbsTol(PERSIST_acc)) ...
-            odeset('RelTol',1e-12,'AbsTol',1e-3) };
-            options_adjoint = { odeset('RelTol', PERSIST_RelTol(PERSIST_acc) ,'AbsTol', PERSIST_AbsTol(PERSIST_acc), 'MaxStep', 0.1) ...
-            odeset('RelTol',1e-12,'AbsTol',1e-3, 'MaxStep', 0.1) };
+            odeset('RelTol', PERSIST_RelTol(PERSIST_acc)/10 ,'AbsTol', PERSIST_AbsTol(PERSIST_acc)/10) };
+            options_adjoint = { odeset('RelTol', PERSIST_RelTol(PERSIST_acc) ,'AbsTol', PERSIST_AbsTol(PERSIST_acc)/1e4, 'MaxStep', 0.1) ...
+            odeset('RelTol', PERSIST_RelTol(PERSIST_acc)/10 ,'AbsTol', PERSIST_AbsTol(PERSIST_acc)/10/1e4, 'MaxStep', 0.1) };
             learning_rate = PERSIST_learning_rate(PERSIST_exp);
 
             % turn on logging to file
