@@ -48,7 +48,7 @@ switch opt_case
         beta = 1e-4 * [2.72 13.9 13.4 29.8 12.4 5.18];
         % intentionally wrong initial data
         %beta = [0.00237,0.00150,0.00089,0.00395,0.00162,0.00056];
-        beta_uncertainties = 1e-6 * [1.75 3.96 9.98 5.83 3.84 2.45];
+        beta_uncertainties = 1e-6 * [1.75 3.96 3.98 5.83 3.84 2.45];
         rand_magnitude = [0.00001, 0.0001, 0.0001, 0.0002, 0.0001, 0.00005];
 
     case 'C15_8'
