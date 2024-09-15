@@ -29,6 +29,8 @@ PERSIST_experiment_set = { [1], [1 2 3] };
 PERSIST_exp_name = { 'drop', 'all' };
 PERSIST_learning_rate = [ 5e-6, 1e-6 ];
 
+mkdir(PERSIST_basedir);
+
 for PERSIST_acc =1:3
     for PERSIST_method = 1:2
         for PERSIST_exp = 1:2
