@@ -16,8 +16,8 @@ PERSIST_optimizer = 'VanillaGD';
 PERSIST_drift_penalization = 0;
 
 % accuracy
-PERSIST_RelTol = [ 1e-5, 1e-7, 1e-9 ];  % both for primary & adjoint
-PERSIST_AbsTol = [ 1e+1, 1e-1, 1e-3 ];  % for primary only; value for adjoint is 10^4 times smaller
+PERSIST_RelTol = [ 1e-5, 1e-6, 1e-9 ];  % both for primary & adjoint
+PERSIST_AbsTol = [ 1e+1, 1e+0, 1e-3 ];  % for primary only; value for adjoint is 10^4 times smaller
 PERSIST_acc_name = { 'low', 'medium', 'high' };
 
 % gradient computation method
