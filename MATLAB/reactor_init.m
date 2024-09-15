@@ -34,7 +34,7 @@ global max_data_points_to_plot;
 % -------------------------------------------------------------------------
 % Model parameters
 
-opt_case = 'C12-C_6';
+opt_case = 'C15_6';
 raw_data = 0;           % 0 = moving-averaged power output data, 1 = raw data
 
 switch opt_case
