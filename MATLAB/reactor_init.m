@@ -169,9 +169,9 @@ max_data_points_to_plot = 101;
 % ODE solver options (different for fixed & adaptive learning rate)
 % options = odeset('RelTol',1e-5,'AbsTol',1e-2,'Stats','on');
 options_primary = { odeset('RelTol',1e-5,'AbsTol',1e+1) ...
-            odeset('RelTol',1e-6,'AbsTol',1e0) };
+            odeset('RelTol',1e-9,'AbsTol',1e-3) };
 options_adjoint = { odeset('RelTol',1e-5,'AbsTol',1e-3, 'MaxStep', 0.1) ...
-            odeset('RelTol',1e-6,'AbsTol',1e-4, 'MaxStep', 0.1) };
+            odeset('RelTol',1e-9,'AbsTol',1e-7, 'MaxStep', 0.1) };
 
 
 % ------------------------------------------------------------------------
