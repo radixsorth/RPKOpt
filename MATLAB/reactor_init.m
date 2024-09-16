@@ -117,7 +117,7 @@ exp_names = { 'Rod drop', 'Sine', 'Triangular' };
 datafiles = {'drop.dat', 'sin.dat', 'triang.dat'};
 % weights of the individual experiments in the loss functional
 % (below, they are further adjusted to account for loss per unit time of each experiment)
-exp_weights = {1, 4, 1};
+exp_weights = {1, 1, 1};
 
 raw_prefix = {'', 'raw_'};
 % path to power output datafiles
