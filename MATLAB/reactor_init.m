@@ -153,7 +153,7 @@ epochs_to_go = 100;
 adaptivity = 0;
 adjoint = 1;                    % gradient computation: 0 = sensitivity analysis, 1 = adjoint method
 grad_norm_mode = 1;             % 1 = gradient is normalized, 0 = gradient is divided by its initial norm upon calling reactor_optimize
-learning_rate = 5e-6;
+learning_rate = 2.5e-5;
 rel_learning_rate = ones(1,beta_size);
 epsilon = ones(1,beta_size)*1e-6;   % fixed step for the finite difference approximation of gradient components
 epsilon_a_ratio = 0.2;              % ... or the step is related to learning rate (see calc_gradient())
