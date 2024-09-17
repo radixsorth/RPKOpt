@@ -26,4 +26,4 @@ for i=1:optimization_instance
     plot(0:every_nth:epochs_to_go, loss_acc_total((i-1)*(epochs_to_go+1)+1 : every_nth : i*(epochs_to_go+1)), '-o', 'LineWidth', 2);
 end
 xlabel('Epoch within instance');
-ylabel('Relative loss w.r.t. the initial beta [%]');
+ylabel('Relative loss w.r.t. the initial guess in the first instance [%]');
