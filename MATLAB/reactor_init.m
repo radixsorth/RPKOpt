@@ -100,7 +100,7 @@ end
 % Experiments description & data files
 
 % weight on the regularization term (gamma)
-drift_penalization = 1e4;
+drift_penalization = 0; %1e4;
 
 % the reactivity data are provided in the data files in beta_eff units
 % (divided by "sum(beta)") which is determined by the Serpent code
@@ -166,13 +166,19 @@ max_retries = 100;
 % value
 max_data_points_to_plot = 101;
 
-% ODE solver options (different for fixed & adaptive learning rate)
-% options = odeset('RelTol',1e-5,'AbsTol',1e-2,'Stats','on');
-options_primary = { odeset('RelTol',1e-5,'AbsTol',1e+1) ...
-            odeset('RelTol',1e-9,'AbsTol',1e-3) };
-options_adjoint = { odeset('RelTol',1e-5,'AbsTol',1e-3, 'MaxStep', 0.1) ...
-            odeset('RelTol',1e-9,'AbsTol',1e-7, 'MaxStep', 0.1) };
+% ODE solver options (potentially different for fixed & adaptive learning rate)
 
+% "MEDIUM ACCURACY" both with&without adaptive LR: suitable for drift penalization
+% options_primary = { odeset('RelTol',1e-7,'AbsTol',1e-1) ...
+%             odeset('RelTol',1e-7,'AbsTol',1e-1) };
+% options_adjoint = { odeset('RelTol',1e-7,'AbsTol',1e-5, 'MaxStep', 0.1) ...
+%             odeset('RelTol',1e-7,'AbsTol',1e-5, 'MaxStep', 0.1) };
+
+% "LOW ACCURACY" both with&without adaptive LR: suitable for optimization WITHOUT drift penalization
+options_primary = { odeset('RelTol',1e-5,'AbsTol',1e+1) ...
+            odeset('RelTol',1e-5,'AbsTol',1e+1) };
+options_adjoint = { odeset('RelTol',1e-5,'AbsTol',1e-3, 'MaxStep', 0.1) ...
+            odeset('RelTol',1e-5,'AbsTol',1e-3, 'MaxStep', 0.1) };
 
 % ------------------------------------------------------------------------
 % *** NO USER-ADJUSTABLE PARAMETERS BELOW THIS LINE ***
