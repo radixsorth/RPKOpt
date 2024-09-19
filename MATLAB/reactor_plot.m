@@ -76,7 +76,7 @@ for j=1:exp_count
        loss_legend_entries{j+1} = [ exp_names{j} ' loss' ];
 end
 xlabel(ax_loss, 'Epoch');
-ylabel(ax_loss, 'Relative loss w.r.t. the initial beta [%]');
+ylabel(ax_loss, 'Relative loss w.r.t. the initial guess [%]');
 
 legend(ax_loss, loss_legend_entries);
 
