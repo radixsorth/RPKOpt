@@ -8,7 +8,7 @@ if(~isempty(PERSIST_batchmode))
 end
 
 global PERSIST_fig_handle;
-global beta beta_history;
+global beta beta_init beta_uncertainties beta_history epochs_to_go;
 
 % avoid overwriting the content of the main figure
 if(gcf==PERSIST_fig_handle)
@@ -26,6 +26,10 @@ subplot_count = size(beta,2);
     
     records = size(beta_history,2);
 
+    % shade out the uncertainty range
+    rectangle('Position',[0 beta_init(pl)-beta_uncertainties(pl) epochs_to_go 2*beta_uncertainties(pl)],'LineStyle','--','FaceColor', [0 0 0 0.07]);
+
+    % plot the paths for all available optimization instances
     for r=1:records
         final_epoch = size(beta_history{r},1)-1;
 
@@ -34,7 +38,10 @@ subplot_count = size(beta,2);
         %plot(0:every_nth:final_epoch, beta_history{r}(1:every_nth:end,pl),'-o');
 
         % plot curves only
-        plot(0:final_epoch, beta_history{r}(:,pl),'-');
+        plot(0:final_epoch, beta_history{r}(:,pl),'-','LineWidth',2);
+        % disable auto x-range adjustment upon window resize
+        xlim([0 final_epoch]);
+
     end
     xlabel('Epoch');
     ylabel(sprintf('$\\beta_{\\mathrm{eff},%d}$',pl),'Interpreter','latex');
